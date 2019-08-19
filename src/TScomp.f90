@@ -35,36 +35,36 @@ avgy(:) = SUM(V, DIM = 2)/DBLE(my)
 
 k = 0
 DO i = 1, (mx-1)
-	DO j = (i+1), mx
-		k = k + 1
-		Wdiff(:, k) = W(:, j) - W(:, i)
-	END DO
+DO j = (i+1), mx
+k = k + 1
+Wdiff(:, k) = W(:, j) - W(:, i)
+END DO
 END DO
 
 k = 0
 DO i = 1, (my-1)
-	DO j = (i+1), my
-		k = k + 1
-		Vdiff(:, k) = V(:, j) - V(:, i)
-	END DO
+DO j = (i+1), my
+k = k + 1
+Vdiff(:, k) = V(:, j) - V(:, i)
+END DO
 END DO
 
 
 TS(1) = 0
 TS(2) = 0
 DO j = 1, nGL
-	x = (BDs(1)+BDs(2))/DBLE(2) + (BDs(2)-BDs(1))*GL(j,1)/DBLE(2)
-	wei = GL(j,2)
-	denomx = sqrt(abs(SUM(cos(x*Wdiff/DBLE(mx)))/DBLE(N_x)))**(DBLE(mx))
-	denomy = sqrt(abs(SUM(cos(x*Vdiff/DBLE(my)))/DBLE(N_y)))**(DBLE(my))
-	Wcos = (SUM(cos(x*avgx(:)))/DBLE(nx))/denomx
-	Vcos = (SUM(cos(x*avgy(:)))/DBLE(ny))/denomy
-	Wsin = (SUM(sin(x*avgx(:)))/DBLE(nx))/denomx
-	Vsin = (SUM(sin(x*avgy(:)))/DBLE(ny))/denomy
+x = (BDs(1)+BDs(2))/DBLE(2) + (BDs(2)-BDs(1))*GL(j,1)/DBLE(2)
+wei = GL(j,2)
+denomx = sqrt(abs(SUM(cos(x*Wdiff/DBLE(mx)))/DBLE(N_x)))**(DBLE(mx))
+denomy = sqrt(abs(SUM(cos(x*Vdiff/DBLE(my)))/DBLE(N_y)))**(DBLE(my))
+Wcos = (SUM(cos(x*avgx(:)))/DBLE(nx))/denomx
+Vcos = (SUM(cos(x*avgy(:)))/DBLE(ny))/denomy
+Wsin = (SUM(sin(x*avgx(:)))/DBLE(nx))/denomx
+Vsin = (SUM(sin(x*avgy(:)))/DBLE(ny))/denomy
 
-	TStmp = wei*((Wcos - Vcos)**2 + (Wsin - Vsin)**2)
-	TS(1) = TS(1) + TStmp
-	TS(2) = TS(2) + TStmp*EXP(-x**2/DBLE(2))
+TStmp = wei*((Wcos - Vcos)**2 + (Wsin - Vsin)**2)
+TS(1) = TS(1) + TStmp
+TS(2) = TS(2) + TStmp*EXP(-x**2/DBLE(2))
 END DO
 TS(1) = (BDs(2)-BDs(1))*DBLE(nx)*TS(1)/DBLE(2)
 TS(2) = (BDs(2)-BDs(1))*DBLE(nx)*TS(2)/DBLE(2)
@@ -75,7 +75,7 @@ END SUBROUTINE TScomp
 
 
 SUBROUTINE AMISE(W, V, nx, ny, mx, my, GL, nGL, Wseq, Vseq, nseq,&
-				Wobj, Vobj, varx, vary, Wdiffvar, Vdiffvar)
+Wobj, Vobj, varx, vary, Wdiffvar, Vdiffvar)
 IMPLICIT NONE
 ! W: (nx, mx) matrix
 ! V: (ny, my) matrix
@@ -99,18 +99,18 @@ N_y = ny*my*(my-1)/2
 
 k = 0
 DO i = 1, (mx-1)
-	DO j = (i+1), mx
-		k = k + 1
-		Wdiff(:, k) = W(:, j) - W(:, i)
-	END DO
+DO j = (i+1), mx
+k = k + 1
+Wdiff(:, k) = W(:, j) - W(:, i)
+END DO
 END DO
 
 k = 0
 DO i = 1, (my-1)
-	DO j = (i+1), my
-		k = k + 1
-		Vdiff(:, k) = V(:, j) - V(:, i)
-	END DO
+DO j = (i+1), my
+k = k + 1
+Vdiff(:, k) = V(:, j) - V(:, i)
+END DO
 END DO
 
 Wvar = (SUM(W**2) - SUM(W)**2/DBLE(nx*mx))/DBLE(nx*mx-1)
@@ -126,18 +126,18 @@ Vdiffvar = (SUM(Vdiff**2) - SUM(Vdiff)**2/DBLE(N_y))/DBLE(N_y-1)
 
 
 DO i = 1, nseq
-	Wobj(i) = 0
-	Vobj(i) = 0
-	DO j = 1, nGL/2
-		x = GL(j, 1)
-		wei = GL(j, 2)
-		denomx = sqrt(abs(SUM(cos(x*Wdiff/(DBLE(mx)*Wseq(i))))/DBLE(N_x)))**(DBLE(mx))
-		denomy = sqrt(abs(SUM(cos(x*Vdiff/(DBLE(my)*Vseq(i))))/DBLE(N_y)))**(DBLE(my))
-		Wobj(i) = Wobj(i) + wei*(1 - (1 - x**2)**3/denomx)**2/x**2
-		Vobj(i) = Vobj(i) + wei*(1 - (1 - x**2)**3/denomy)**2/x**2			
-	END DO
-	Wobj(i) = Wseq(i)*Wobj(i)/(Pi*nx) + 9*Wseq(i)**4/(4*sqrt(Pi)*varx**(1.5))
-	Vobj(i) = Vseq(i)*Vobj(i)/(Pi*nx) + 9*Vseq(i)**4/(4*sqrt(Pi)*vary**(1.5))
+Wobj(i) = 0
+Vobj(i) = 0
+DO j = 1, nGL/2
+x = GL(j, 1)
+wei = GL(j, 2)
+denomx = sqrt(abs(SUM(cos(x*Wdiff/(DBLE(mx)*Wseq(i))))/DBLE(N_x)))**(DBLE(mx))
+denomy = sqrt(abs(SUM(cos(x*Vdiff/(DBLE(my)*Vseq(i))))/DBLE(N_y)))**(DBLE(my))
+Wobj(i) = Wobj(i) + wei*(1 - (1 - x**2)**3/denomx)**2/x**2
+Vobj(i) = Vobj(i) + wei*(1 - (1 - x**2)**3/denomy)**2/x**2			
+END DO
+Wobj(i) = Wseq(i)*Wobj(i)/(Pi*nx) + 9*Wseq(i)**4/(4*sqrt(Pi)*varx**(1.5))
+Vobj(i) = Vseq(i)*Vobj(i)/(Pi*nx) + 9*Vseq(i)**4/(4*sqrt(Pi)*vary**(1.5))
 END DO
 
 
@@ -170,47 +170,47 @@ N_y = ny*my*(my-1)/2
 
 k = 0
 DO i = 1, (mx-1)
-	DO j = (i+1), mx
-		k = k + 1
-		Wdiff(:, k) = W(:, j) - W(:, i)
-	END DO
+DO j = (i+1), mx
+k = k + 1
+Wdiff(:, k) = W(:, j) - W(:, i)
+END DO
 END DO
 
 k = 0
 DO i = 1, (my-1)
-	DO j = (i+1), my
-		k = k + 1
-		Vdiff(:, k) = V(:, j) - V(:, i)
-	END DO
+DO j = (i+1), my
+k = k + 1
+Vdiff(:, k) = V(:, j) - V(:, i)
+END DO
 END DO
 
 DO i = 1, nseq
-	Fx(i) = 0
-	Fy(i) = 0
-	DO j = 1, nGL/2
-		x = GL(j, 1)
-		wei = GL(j, 2)
-		denomx = sqrt(abs(SUM(cos(x*Wdiff/(DBLE(mx)*bwx)))/DBLE(N_x)))**(DBLE(mx))
-		denomy = sqrt(abs(SUM(cos(x*Vdiff/(DBLE(my)*bwy)))/DBLE(N_y)))**(DBLE(my))
-		Fx(i) = Fx(i) + wei*(1-x**2)**3*SUM(sin(x*(zseq(i) - (SUM(W, DIM = 2)/&
-			DBLE(mx)))/bwx))/(denomx*x)
-		Fy(i) = Fy(i) + wei*(1-x**2)**3*SUM(sin(x*(zseq(i) - (SUM(V, DIM = 2)/&
-			DBLE(my)))/bwy))/(denomy*x)
-	END DO
-	Fx(i) = Fx(i)/(Pi*nx) + 0.5
-	Fy(i) = Fy(i)/(Pi*ny) + 0.5
-	IF (Fx(i) > 1) THEN 
-		Fx(i) = 1 
-	END IF
-	IF (Fx(i) < 0) THEN 
-		Fx(i) = 0 
-	END IF
-	IF (Fy(i) > 1) THEN 
-		Fy(i) = 1 
-	END IF
-	IF (Fy(i) < 0) THEN 
-		Fy(i) = 0 
-	END IF		
+Fx(i) = 0
+Fy(i) = 0
+DO j = 1, nGL/2
+x = GL(j, 1)
+wei = GL(j, 2)
+denomx = sqrt(abs(SUM(cos(x*Wdiff/(DBLE(mx)*bwx)))/DBLE(N_x)))**(DBLE(mx))
+denomy = sqrt(abs(SUM(cos(x*Vdiff/(DBLE(my)*bwy)))/DBLE(N_y)))**(DBLE(my))
+Fx(i) = Fx(i) + wei*(1-x**2)**3*SUM(sin(x*(zseq(i) - (SUM(W, DIM = 2)/&
+DBLE(mx)))/bwx))/(denomx*x)
+Fy(i) = Fy(i) + wei*(1-x**2)**3*SUM(sin(x*(zseq(i) - (SUM(V, DIM = 2)/&
+DBLE(my)))/bwy))/(denomy*x)
+END DO
+Fx(i) = Fx(i)/(Pi*nx) + 0.5
+Fy(i) = Fy(i)/(Pi*ny) + 0.5
+IF (Fx(i) > 1) THEN 
+Fx(i) = 1 
+END IF
+IF (Fx(i) < 0) THEN 
+Fx(i) = 0 
+END IF
+IF (Fy(i) > 1) THEN 
+Fy(i) = 1 
+END IF
+IF (Fy(i) < 0) THEN 
+Fy(i) = 0 
+END IF		
 END DO	
 
 
@@ -246,55 +246,55 @@ N_y = ny*my*(my-1)/2
 
 k = 0
 DO i = 1, (mx-1)
-	DO j = (i+1), mx
-		k = k + 1
-		Wdiff(:, k) = W(:, j) - W(:, i)
-	END DO
+DO j = (i+1), mx
+k = k + 1
+Wdiff(:, k) = W(:, j) - W(:, i)
+END DO
 END DO
 
 k = 0
 DO i = 1, (my-1)
-	DO j = (i+1), my
-		k = k + 1
-		Vdiff(:, k) = V(:, j) - V(:, i)
-	END DO
+DO j = (i+1), my
+k = k + 1
+Vdiff(:, k) = V(:, j) - V(:, i)
+END DO
 END DO
 
 hoptW = (1.06/EXP(1.0))*((SUM(Wdiff**2) - SUM(Wdiff)**2/DBLE(N_x))/DBLE(N_x-1))*N_x**(-0.2)
 hoptV = (1.06/EXP(1.0))*((SUM(Vdiff**2) - SUM(Vdiff)**2/DBLE(N_y))/DBLE(N_y-1))*N_y**(-0.2)
 
 DO i = 1, nseq
-	Ux(i) = 0
-	Uy(i) = 0
-	DO j = 1, nGL
-		x = GL(j, 1) + 1
-		wei = GL(j, 2)
-		denomx = sqrt(abs(SUM(cos(x*Wdiff/(2*hoptW)))/DBLE(N_x)))
-		denomy = sqrt(abs(SUM(cos(x*Vdiff/(2*hoptV)))/DBLE(N_y)))
-		Ux(i) = Ux(i) + wei*sin(errseq(i)*x/(2*hoptW))*denomx*(1 - x**2/4)**(1.5)/x
-		Uy(i) = Uy(i) + wei*sin(errseq(i)*x/(2*hoptV))*denomy*(1 - x**2/4)**(1.5)/x
-	END DO
-	Ux(i) = Ux(i)/Pi + 0.5
-	Uy(i) = Uy(i)/Pi + 0.5
-	IF (Ux(i) > 1) THEN 
-		Ux(i) = 1 
-	END IF
-	IF (Ux(i) < 0) THEN 
-		Ux(i) = 0 
-	END IF
-	IF (Uy(i) > 1) THEN 
-		Uy(i) = 1 
-	END IF
-	IF (Uy(i) < 0) THEN 
-		Uy(i) = 0 
-	END IF	
+Ux(i) = 0
+Uy(i) = 0
+DO j = 1, nGL
+x = GL(j, 1) + 1
+wei = GL(j, 2)
+denomx = sqrt(abs(SUM(cos(x*Wdiff/(2*hoptW)))/DBLE(N_x)))
+denomy = sqrt(abs(SUM(cos(x*Vdiff/(2*hoptV)))/DBLE(N_y)))
+Ux(i) = Ux(i) + wei*sin(errseq(i)*x/(2*hoptW))*denomx*(1 - x**2/4)**(1.5)/x
+Uy(i) = Uy(i) + wei*sin(errseq(i)*x/(2*hoptV))*denomy*(1 - x**2/4)**(1.5)/x
+END DO
+Ux(i) = Ux(i)/Pi + 0.5
+Uy(i) = Uy(i)/Pi + 0.5
+IF (Ux(i) > 1) THEN 
+Ux(i) = 1 
+END IF
+IF (Ux(i) < 0) THEN 
+Ux(i) = 0 
+END IF
+IF (Uy(i) > 1) THEN 
+Uy(i) = 1 
+END IF
+IF (Uy(i) < 0) THEN 
+Uy(i) = 0 
+END IF	
 END DO
 
 RETURN
 END SUBROUTINE Uhat
 
 SUBROUTINE BootGen(nx, ny, mx, my, nboot, F, Ux, Uy, zseq, errseq,& 
-				nseq, Xb, Yb, Xerr, Yerr)
+nseq, Xb, Yb, Xerr, Yerr)
 IMPLICIT NONE
 
 INTEGER :: nx, ny, mx, my, nboot, nseq
@@ -325,27 +325,27 @@ DEALLOCATE(a_seed)
 !	tmp = zseq(idx)
 
 DO i = 1, nx*nboot
-	CALL RANDOM_NUMBER(u)
-	idx = MINLOC(F, DIM = 1, MASK = (F >= u))
-	Xb(i) = zseq(idx)
+CALL RANDOM_NUMBER(u)
+idx = MINLOC(F, DIM = 1, MASK = (F >= u))
+Xb(i) = zseq(idx)
 END DO	
 
 DO i = 1, ny*nboot
-	CALL RANDOM_NUMBER(u)
-	idx = MINLOC(F, DIM = 1, MASK = (F >= u))
-	Yb(i) = zseq(idx)
+CALL RANDOM_NUMBER(u)
+idx = MINLOC(F, DIM = 1, MASK = (F >= u))
+Yb(i) = zseq(idx)
 END DO	
 
 DO i = 1, nx*mx*nboot
-	CALL RANDOM_NUMBER(u)
-	idx = MINLOC(F, DIM = 1, MASK = (Ux >= u))
-	Xerr(i) = errseq(idx) 
+CALL RANDOM_NUMBER(u)
+idx = MINLOC(F, DIM = 1, MASK = (Ux >= u))
+Xerr(i) = errseq(idx) 
 END DO	
-	
+
 DO i = 1, ny*my*nboot
-	CALL RANDOM_NUMBER(u)
-	idx = MINLOC(F, DIM = 1, MASK = (Uy >= u))
-	Yerr(i) = errseq(idx) 
+CALL RANDOM_NUMBER(u)
+idx = MINLOC(F, DIM = 1, MASK = (Uy >= u))
+Yerr(i) = errseq(idx) 
 END DO	
 
 RETURN
@@ -354,10 +354,10 @@ END SUBROUTINE BootGen
 
 
 SUBROUTINE BootDist(nx, ny, mx, my, nboot, Xb, Yb, Xerr, Yerr, &
-				GL, nGL, BDs, Bdist)
+GL, nGL, BDs, Bdist)
 IMPLICIT NONE
 
-INTEGER :: nx, ny, mx, my, nboot, nGH, nGL, nVARs
+INTEGER :: nx, ny, mx, my, nboot, nGL
 real(8) :: Xb(nx*nboot), Yb(ny*nboot), Xerr(nx*mx*nboot), Yerr(ny*my*nboot)
 real(8) :: Bdist(nboot,2)
 real(8) :: GL(nGL, 2), BDs(2)
@@ -379,25 +379,25 @@ INTEGER :: i, j
 !	END DO 
 
 DO i = 1, nboot
-	DO j = 1, mx
-		Wtmp(:,j) = Xb(((i-1)*nx + 1):(i*nx))
-	END DO
-	Wtmp = Wtmp + RESHAPE(Xerr(((i-1)*(nx*mx)+1):(i*nx*mx)), (/nx, mx/))
-	DO j = 1, my
-		Vtmp(:,j) = Yb(((i-1)*ny + 1):(i*ny))
-	END DO
-	Vtmp = Vtmp + RESHAPE(Yerr(((i-1)*(ny*my)+1):(i*ny*my)), (/ny, my/))
-	CALL TScomp(Wtmp, Vtmp, nx, ny, mx, my, GL, nGL, BDs, TS)
-	Bdist(i,:) = TS(:)
+DO j = 1, mx
+Wtmp(:,j) = Xb(((i-1)*nx + 1):(i*nx))
+END DO
+Wtmp = Wtmp + RESHAPE(Xerr(((i-1)*(nx*mx)+1):(i*nx*mx)), (/nx, mx/))
+DO j = 1, my
+Vtmp(:,j) = Yb(((i-1)*ny + 1):(i*ny))
+END DO
+Vtmp = Vtmp + RESHAPE(Yerr(((i-1)*(ny*my)+1):(i*ny*my)), (/ny, my/))
+CALL TScomp(Wtmp, Vtmp, nx, ny, mx, my, GL, nGL, BDs, TS)
+Bdist(i,:) = TS(:)
 END DO
 
 RETURN
-END SUBROUTINE BootDist	
+END SUBROUTINE BootDist
 
 SUBROUTINE ABhat(W, V, nx, ny, mx, my, points, nt0, awhat, bwhat, avhat, bvhat)
 IMPLICIT NONE
 
-INTEGER :: nx, ny, nGL, nt0, N_x, N_y, mx, my
+INTEGER :: nx, ny, nt0, N_x, N_y, mx, my
 real(8) :: W(nx, mx), V(ny, my)
 real(8) :: points(nt0)
 real(8) :: Wdiff(nx, mx*(mx-1)/2), Vdiff(ny, my*(my-1)/2)
@@ -415,27 +415,27 @@ avgy(:) = SUM(V, DIM = 2)/DBLE(my)
 	
 k = 0
 DO i = 1, (mx-1)
-	DO j = (i+1), mx
-		k = k + 1
-		Wdiff(:, k) = W(:, j) - W(:, i)
-	END DO
+DO j = (i+1), mx
+k = k + 1
+Wdiff(:, k) = W(:, j) - W(:, i)
+END DO
 END DO
 
 k = 0
 DO i = 1, (my-1)
-	DO j = (i+1), my
-		k = k + 1
-		Vdiff(:, k) = V(:, j) - V(:, i)
-	END DO
+DO j = (i+1), my
+k = k + 1
+Vdiff(:, k) = V(:, j) - V(:, i)
+END DO
 END DO
 
 DO i = 1, nt0
-	denomx = sqrt(abs(SUM(cos(points(i)*Wdiff/DBLE(mx)))/DBLE(N_x)))**(DBLE(mx))
-	denomy = sqrt(abs(SUM(cos(points(i)*Vdiff/DBLE(my)))/DBLE(N_y)))**(DBLE(my))
-	awhat(i) = (SUM(cos(points(i)*avgx(:)))/DBLE(nx))/denomx
-	bwhat(i) = (SUM(sin(points(i)*avgx(:)))/DBLE(nx))/denomx
-	avhat(i) = (SUM(cos(points(i)*avgy(:)))/DBLE(ny))/denomy
-	bvhat(i) = (SUM(sin(points(i)*avgy(:)))/DBLE(ny))/denomy
+denomx = sqrt(abs(SUM(cos(points(i)*Wdiff/DBLE(mx)))/DBLE(N_x)))**(DBLE(mx))
+denomy = sqrt(abs(SUM(cos(points(i)*Vdiff/DBLE(my)))/DBLE(N_y)))**(DBLE(my))
+awhat(i) = (SUM(cos(points(i)*avgx(:)))/DBLE(nx))/denomx
+bwhat(i) = (SUM(sin(points(i)*avgx(:)))/DBLE(nx))/denomx
+avhat(i) = (SUM(cos(points(i)*avgy(:)))/DBLE(ny))/denomy
+bvhat(i) = (SUM(sin(points(i)*avgy(:)))/DBLE(ny))/denomy
 END DO
 
 RETURN
@@ -443,10 +443,10 @@ END SUBROUTINE ABhat
 
 
 SUBROUTINE ABhat1(W, V, nx, ny, mx, my, points, nt0, Bidx, nboot, &
-				awhat, bwhat, avhat, bvhat)
+awhat, bwhat, avhat, bvhat)
 IMPLICIT NONE
 
-INTEGER :: nx, ny, nGL, nt0, N_x, N_y, mx, my, nboot, Bidx(nboot*nx)
+INTEGER :: nx, ny, nt0, N_x, N_y, mx, my, nboot, Bidx(nboot*nx)
 real(8) :: W(nx, mx), V(ny, my), Wtmp(nx, mx), Vtmp(ny, my)
 real(8) :: points(nt0)
 real(8) :: Wdiff(nx, mx*(mx-1)/2), Vdiff(ny, my*(my-1)/2)
@@ -462,42 +462,42 @@ N_y = ny*my*(my-1)/2
 
 DO l = 1, nboot
 
-	Wtmp(:, :) = W(Bidx(((l-1)*nx+1):(l*nx)), :)
-	Vtmp(:, :) = V(Bidx(((l-1)*nx+1):(l*nx)), :)
+Wtmp(:, :) = W(Bidx(((l-1)*nx+1):(l*nx)), :)
+Vtmp(:, :) = V(Bidx(((l-1)*nx+1):(l*nx)), :)
 
-	avgx(:) = SUM(Wtmp, DIM = 2)/DBLE(mx)
-	avgy(:) = SUM(Vtmp, DIM = 2)/DBLE(my)
+avgx(:) = SUM(Wtmp, DIM = 2)/DBLE(mx)
+avgy(:) = SUM(Vtmp, DIM = 2)/DBLE(my)
 
-	k = 0
-	DO i = 1, (mx-1)
-		DO j = (i+1), mx
-			k = k + 1
-			Wdiff(:, k) = Wtmp(:, j) - Wtmp(:, i)
-		END DO
-	END DO
+k = 0
+DO i = 1, (mx-1)
+DO j = (i+1), mx
+k = k + 1
+Wdiff(:, k) = Wtmp(:, j) - Wtmp(:, i)
+END DO
+END DO
 
-	k = 0
-	DO i = 1, (my-1)
-		DO j = (i+1), my
-			k = k + 1
-			Vdiff(:, k) = Vtmp(:, j) - Vtmp(:, i)
-		END DO
-	END DO
+k = 0
+DO i = 1, (my-1)
+DO j = (i+1), my
+k = k + 1
+Vdiff(:, k) = Vtmp(:, j) - Vtmp(:, i)
+END DO
+END DO
 
-	DO i = 1, nt0
-		denomx = sqrt(abs(SUM(cos(points(i)*Wdiff/DBLE(mx)))/DBLE(N_x)))**(DBLE(mx))
-		denomy = sqrt(abs(SUM(cos(points(i)*Vdiff/DBLE(my)))/DBLE(N_y)))**(DBLE(my))
-		awhat_tmp(i) = (SUM(cos(points(i)*avgx(:)))/DBLE(nx))/denomx
-		bwhat_tmp(i) = (SUM(sin(points(i)*avgx(:)))/DBLE(nx))/denomx
-		avhat_tmp(i) = (SUM(cos(points(i)*avgy(:)))/DBLE(ny))/denomy
-		bvhat_tmp(i) = (SUM(sin(points(i)*avgy(:)))/DBLE(ny))/denomy
-	END DO
-	
-	awhat(:, l) = awhat_tmp(:)
-	bwhat(:, l) = bwhat_tmp(:)
-	avhat(:, l) = avhat_tmp(:)
-	bvhat(:, l) = bvhat_tmp(:)
-	
+DO i = 1, nt0
+denomx = sqrt(abs(SUM(cos(points(i)*Wdiff/DBLE(mx)))/DBLE(N_x)))**(DBLE(mx))
+denomy = sqrt(abs(SUM(cos(points(i)*Vdiff/DBLE(my)))/DBLE(N_y)))**(DBLE(my))
+awhat_tmp(i) = (SUM(cos(points(i)*avgx(:)))/DBLE(nx))/denomx
+bwhat_tmp(i) = (SUM(sin(points(i)*avgx(:)))/DBLE(nx))/denomx
+avhat_tmp(i) = (SUM(cos(points(i)*avgy(:)))/DBLE(ny))/denomy
+bvhat_tmp(i) = (SUM(sin(points(i)*avgy(:)))/DBLE(ny))/denomy
+END DO
+
+awhat(:, l) = awhat_tmp(:)
+bwhat(:, l) = bwhat_tmp(:)
+avhat(:, l) = avhat_tmp(:)
+bvhat(:, l) = bvhat_tmp(:)
+
 END DO
 
 RETURN

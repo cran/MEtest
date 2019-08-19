@@ -33,10 +33,10 @@ me.test <- function(W, V, B = 1000, wt = c("Uniform", "Normal"),
   wfun <- match.arg(wt)
   if(is.null(wt.bd)){
     Boot.dist <- Boot.dist(W_in, V_in, nboot = B, wt.bd = wt.bd, wt.prob = wt.prob, nGL = nGL)
-    Test.stat <- TS.comp(W = W, V = V, bd = Boot.dist$bd, nGL = nGL)	
+    Test.stat <- TS.comp(W = W_in, V = V_in, bd = Boot.dist$bd, nGL = nGL)	
   } else{
     Boot.dist <- Boot.dist(W_in, V_in, nboot = B, wt.bd = wt.bd, wt.prob = wt.prob, nGL = nGL)
-    Test.stat <- TS.comp(W = W, V = V, bd = wt.bd, nGL = nGL)	
+    Test.stat <- TS.comp(W = W_in, V = V_in, bd = wt.bd, nGL = nGL)	
   }
   
 	pval.tmp <- NULL
@@ -83,10 +83,22 @@ Boot.dist <- function(W, V, nboot = 1000, wt.bd = NULL, wt.prob = 0.99, nGL = 32
 	GL <- cbind(GL1$nodes, GL1$weights)
 
 	## 1. Finding optimal Bandwidth for True signal
-	h.min.W <- h.min.V <- 0.07; h.max.W <- h.max.V <- 0.25 
-	nseq = 300 
+	# h.min.W <- h.min.V <- 0.07; h.max.W <- h.max.V <- 0.25
+	# Wseq <- seq(h.min.W, h.max.W, length = nseq)
+	# Vseq <- seq(h.min.V, h.max.V, length = nseq)
+	
+	## 
+	nseq <- 300 
+	Wbar <- rowMeans(W)
+	sigx <- sqrt(var(Wbar) - sum(apply(W,1, var))/(nx*mx))
+	Vbar <- rowMeans(V)
+	sigy <- sqrt(var(Vbar) - sum(apply(V,1, var))/(ny*my))
+	
+    h.min.W = sigx/15; h.max.W = 3*sigx/20; h.min.V = sigy/15; h.max.V = 3*sigy/20
 	Wseq <- seq(h.min.W, h.max.W, length = nseq)
 	Vseq <- seq(h.min.V, h.max.V, length = nseq)
+	##
+	
 	AMISE.f90 <- .Fortran("AMISE", W = as.double(W), V = as.double(V), nx = as.integer(nx), ny = as.integer(ny), 
 						mx = as.integer(mx), my = as.integer(my), GL = as.double(GL), nGL = as.integer(nGL), 
 						Wseq = as.double(Wseq), Vseq = as.double(Vseq), nseq = as.integer(nseq), 
@@ -110,13 +122,16 @@ Boot.dist <- function(W, V, nboot = 1000, wt.bd = NULL, wt.prob = 0.99, nGL = 32
 						bwy = as.double(h.opt.V), Fx = as.double(rep(0, nseq)), Fy = as.double(rep(0, nseq)))
 	Fx.mon <- 0; Fy.mon <- 0
 
-	Fx.mon[1:which.min(Fhat.f90$Fx)] <- min(Fhat.f90$Fx)
-	Fy.mon[1:which.min(Fhat.f90$Fy)] <- min(Fhat.f90$Fy)
-	for(i in (which.min(Fhat.f90$Fx)+1):nseq) Fx.mon[i] <- max(Fhat.f90$Fx[which.min(Fhat.f90$Fx):i], na.rm = TRUE)
-	for(i in (which.min(Fhat.f90$Fy)+1):nseq) Fy.mon[i] <- max(Fhat.f90$Fy[which.min(Fhat.f90$Fy):i], na.rm = TRUE)
+	Fx.mon <- rep(0, which.min(Fhat.f90$Fx)-1); Fy.mon <- rep(0, which.min(Fhat.f90$Fy)-1)
+	for(i in which.min(Fhat.f90$Fx):which.max(Fhat.f90$Fx)){
+	  Fx.mon[i] <- max(Fhat.f90$Fx[which.min(Fhat.f90$Fx):i], na.rm = TRUE)
+	}
+	for(i in which.min(Fhat.f90$Fy):which.max(Fhat.f90$Fy)){
+	  Fy.mon[i] <- max(Fhat.f90$Fy[which.min(Fhat.f90$Fy):i], na.rm = TRUE)
+	}
+	Fx.mon[(which.max(Fhat.f90$Fx)+1):nseq] <- 1
+	Fy.mon[(which.max(Fhat.f90$Fy)+1):nseq] <- 1
 	F.com <- (nrow(W)*Fx.mon + nrow(V)*Fy.mon)/(nrow(W)+nrow(V))
-	F.com[nseq] <- 1
-	
 
 	## 3. Drawing from the error distribution
 	errsd <- 4

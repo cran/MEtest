@@ -14,16 +14,16 @@ me.test(W, V, B = 1000, wt = c("Uniform", "Normal"), wt.bd = NULL,
 \arguments{
   \item{W}{an \eqn{m_x} (>= 2) by \eqn{n_x} matrix of observations.}
   
-  \item{V}{an \eqn{m_y} (>= 2) by \eqn{n_x} matrix of observations.}
+  \item{V}{an \eqn{m_y} (>= 2) by \eqn{n_y} matrix of observations.}
   
   \item{B}{the number of bootstrap samples. Default is 1000.}
   
-  \item{wt}{type of the weight function.}
+  \item{wt}{type of the weight function. Uniform and standard normal distributions are available.}
   
   \item{wt.bd}{lower and upper bound of the weight function. 
 	If \code{wt.bd} is not specified, bounds are computed based on
 	the deconvoluted distribution function.}
-  
+	
   \item{wt.prob}{probability used to compute lower and upper bound.
 	Will be ignored if \code{wt.bd} is provided.}
 	
@@ -47,7 +47,7 @@ The output is an object of the class \code{htest} like in \code{t.test}.
 }
 \references{
 Lee, D., Lahiri, S. N. and Sinha, S. A Test of Homegeneity of Distributions when Observations
-are Subject to Measurement Errors. \emph{Under revision}.
+are Subject to Measurement Errors. \emph{Submitted}.
 }
 \author{
 DongHyuk Lee, Samiran Sinha

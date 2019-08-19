@@ -1,4 +1,4 @@
 export(me.test)
 importFrom("statmod", "gauss.quad")
-importFrom("stats", "complete.cases", "qnorm")
+importFrom("stats", "complete.cases", "qnorm", "var")
 useDynLib(MEtest, .registration = TRUE)
